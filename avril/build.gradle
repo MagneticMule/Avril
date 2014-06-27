@@ -1,0 +1,71 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    }
+    dependencies {
+
+            //Prior to AS 0.5.9: classpath 'com.android.tools.build:gradle:0.9.+'
+            classpath 'com.android.tools.build:gradle:0.10.1'
+
+            //Prior to AS 0.5.9: classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.9.+'
+            classpath 'org.robolectric.gradle:gradle-android-test-plugin:0.10.+'
+            //previous plugin >> classpath 'com.novoda.gradle:robolectric-plugin:0.0.1-SNAPSHOT'
+
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    }
+}
+
+apply plugin: 'android'
+apply plugin: 'android-test'
+// apply plugin: 'robolectric' //previously >> apply plugin: 'android-test'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion '19.1.0'
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            runProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets {
+        androidTest.setRoot('src/test') //note that this is androidTest instead of instrumentTest
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    compile 'com.android.support:appcompat-v7:+'
+
+    androidTestCompile 'junit:junit:4.10'
+    //include the stable robolectric 2.3 library
+    androidTestCompile 'org.robolectric:robolectric:2.3+'
+    androidTestCompile 'com.squareup:fest-android:1.0.+'
+
+}
+
+//only include files that are suffixed with Test.class and set the max heap size
+androidTest {
+    include '**/*Test.class'
+    maxHeapSize = "2048m"
+}
+
